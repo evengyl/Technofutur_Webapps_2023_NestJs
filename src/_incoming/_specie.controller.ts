@@ -11,8 +11,8 @@ export class SpecieController
 
     @Get(":specie")
     getAllBySpecie(
-        @Param() specie : string
-    )
+        @Param("specie") specie : string
+    ) : Promise<any>
     {
         return this.incomingServe.getAllBySpecie(specie)
     }

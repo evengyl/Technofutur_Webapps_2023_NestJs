@@ -7,7 +7,7 @@ export class IncomingController
     constructor(private readonly incomingServe : IncomingService){}
 
     @Get()
-    getAllAnimals()
+    getAllAnimals() : Promise<any[]>
     {
         return this.incomingServe.getAllAnimals()
     }
@@ -15,8 +15,8 @@ export class IncomingController
 
     @Get(":animalId")
     getOneAnimal(
-        @Param() animalId : number
-    )
+        @Param("animalId") animalId : number
+    ) : Promise<any>
     {
         return this.incomingServe.getOneAnimal(animalId)
     }
@@ -25,7 +25,7 @@ export class IncomingController
     @Post()
     incomingAnimal(
         @Body() newAnimal : any
-    )
+    ) : Promise<any>
     {
         return this.incomingServe.incomingAnimal(newAnimal)
     }
@@ -33,8 +33,8 @@ export class IncomingController
 
     @Patch(":animalId")
     departureAnimal(
-        @Param() animalId : number
-    )
+        @Param("animalId") animalId : number
+    ) : Promise<any>
     {
         return this.incomingServe.departureAnimal(animalId)
     }

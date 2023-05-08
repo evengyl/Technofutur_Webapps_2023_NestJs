@@ -11,8 +11,8 @@ export class AnimalController
     
     @Patch(":animalId")
     reviveAnimal(
-        @Param() animalId : number
-    )
+        @Param("animalId") animalId : number
+    ) : Promise<any>
     {
         return this.incomingServe.reviveAnimal(animalId)
     }
@@ -20,8 +20,8 @@ export class AnimalController
 
     @Delete(":animalId")
     dieAnimal(
-        @Param() animalId : number
-    )
+        @Param("animalId") animalId : number
+    ) : Promise<any>
     {
         return this.incomingServe.dieAnimal(animalId)
     }

@@ -10,8 +10,8 @@ export class VaccineAnimalController
 
     @Patch(":animalId")
     vaccineAnimal(
-        @Param() animalId : number
-    )
+        @Param("animalId") animalId : number
+    ) : Promise<any>
     {
         return this.incomingServe.vaccineAnimal(animalId)
     }
