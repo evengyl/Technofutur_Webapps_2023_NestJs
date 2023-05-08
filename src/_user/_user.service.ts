@@ -27,7 +27,7 @@ export class UserService
         return this.users
     }
 
-    async getOne(userId : UserId) : Promise<User | undefined>
+    async getOne(userId : UserId) : Promise<User>
     {
         let userFoundShort = this.users.find(user => user.id == userId)
 
