@@ -18,12 +18,12 @@ export class UserService
     }
 
 
-    async getAll()
+    async getAll() : Promise<any[]>
     {
         return this.users
     }
 
-    async getOne(userId : number)
+    async getOne(userId : number) : Promise<any | undefined>
     {
         let userFoundShort = this.users.find(user => user.id == userId)
 
@@ -39,7 +39,7 @@ export class UserService
         return userFoundShort
     }
 
-    async create(newUser : any)
+    async create(newUser : any) : Promise<{userId : number}>
     {
         let totalUser = this.users.length
         let newId = totalUser + 1
@@ -47,7 +47,7 @@ export class UserService
         if(newUser.login != undefined && newUser.mdp != undefined)
         {
             this.users.push({id : newId, ...newUser})
-            return newId
+            return { userId : newId }
         }
         else
         {
@@ -56,7 +56,7 @@ export class UserService
 
     }
 
-    async updateMdp(userId : number, newMdp : any)
+    async updateMdp(userId : number, newMdp : any) : Promise<{userId : number}>
     {
         if(newMdp.mdp == undefined) throw new HttpException("Erreur : Nombre de paramètre body incorrect", HttpStatus.BAD_REQUEST)
 
@@ -72,7 +72,7 @@ export class UserService
             throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
     }
 
-    async disable(userId : number)
+    async disable(userId : number) : Promise<{userId : number}>
     {
         let userIndexFound = this.users.findIndex(user => user.id == userId)
 

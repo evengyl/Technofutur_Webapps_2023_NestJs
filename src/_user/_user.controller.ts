@@ -29,7 +29,7 @@ export class UserController
 
     //  --> GET --> /api/users
     @Get()
-    getAllUsers()
+    getAllUsers() : Promise<any[]>
     {
         return this.userServe.getAll()
     }
@@ -39,7 +39,7 @@ export class UserController
     @Get(":userId")
     getOneUser(
         @Param("userId") userId : number
-    )
+    ) : Promise<any>
     {
         return this.userServe.getOne(userId)
     }
@@ -49,7 +49,7 @@ export class UserController
     @Post()
     createUser(
         @Body() newUser : any
-    )
+    ) : Promise<{ userId: number }>
     {
         return this.userServe.create(newUser)
     }
@@ -60,7 +60,7 @@ export class UserController
     updateUser(
         @Param("userId") userId : number,
         @Body() updateUser : any
-    )
+    ) : Promise<{ userId: number }>
     {
         return this.userServe.updateMdp(userId, updateUser)
     }
@@ -70,10 +70,9 @@ export class UserController
     @Delete(":userId")
     disableUser(
         @Param("userId") userId : number
-    )
+    ) : Promise<{ userId: number }>
     {
         return this.userServe.disable(userId)
     }
 
 }
-
