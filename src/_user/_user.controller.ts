@@ -62,8 +62,7 @@ export class UserController
         @Body() updateUser : any
     )
     {
-        console.log(userId)
-        console.log(updateUser)
+        return this.userServe.updateMdp(userId, updateUser)
     }
 
 
@@ -73,7 +72,7 @@ export class UserController
         @Param("userId") userId : number
     )
     {
-        console.log(userId)
+        return this.userServe.disable(userId)
     }
 
 }

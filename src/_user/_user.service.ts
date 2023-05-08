@@ -5,13 +5,13 @@ export class UserService
 {
 
     private users : any[] = [
-        { id : 1, login : "Sébastien", mdp : "Test1234" },
-        { id : 2, login : "Aymeric", mdp : "Test1234" },
-        { id : 3, login : "Amandine", mdp : "Test1234" },
-        { id : 4, login : "Rémy", mdp : "Test1234" },
-        { id : 5, login : "Ferdinando", mdp : "Test1234" },
-        { id : 6, login : "Nicolas", mdp : "Test1234" },
-        { id : 7, login : "Meroine", mdp : "Test1234" }
+        { id : 1, login : "Sébastien", mdp : "Test1234", active : true },
+        { id : 2, login : "Aymeric", mdp : "Test1234", active : true },
+        { id : 3, login : "Amandine", mdp : "Test1234", active : true },
+        { id : 4, login : "Rémy", mdp : "Test1234", active : true },
+        { id : 5, login : "Ferdinando", mdp : "Test1234", active : true },
+        { id : 6, login : "Nicolas", mdp : "Test1234", active : true },
+        { id : 7, login : "Meroine", mdp : "Test1234", active : true }
     ]
 
     constructor(){
@@ -42,7 +42,7 @@ export class UserService
     async create(newUser : any)
     {
         let totalUser = this.users.length
-        let newId = totalUser+1
+        let newId = totalUser + 1
 
         if(newUser.login != undefined && newUser.mdp != undefined)
         {
@@ -56,13 +56,37 @@ export class UserService
 
     }
 
-    async update()
+    async updateMdp(userId : number, newMdp : any)
     {
+        if(newMdp.mdp == undefined) throw new HttpException("Erreur : Nombre de paramètre body incorrect", HttpStatus.BAD_REQUEST)
 
+
+        let userIndexFound = this.users.findIndex(user => user.id == userId)
+
+        if(userIndexFound != -1)
+        {
+            this.users[userIndexFound].mdp = newMdp.mdp
+            return { userId : this.users[userIndexFound].id }
+        }
+        else
+            throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
     }
 
-    async disable()
+    async disable(userId : number)
     {
+        let userIndexFound = this.users.findIndex(user => user.id == userId)
 
+        if(userIndexFound != -1)
+        {
+            if(this.users[userIndexFound].active == true)
+            {
+                this.users[userIndexFound].active == false
+                return { userId : this.users[userIndexFound].id }
+            }
+            else
+                throw new HttpException("Erreur : User already desactivated", HttpStatus.BAD_REQUEST)
+        }
+        else
+            throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
     }
 }
