@@ -1,5 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./_user.service";
+import { UserId } from "src/shared/DTO/userId.dto";
+import { User } from "src/shared/DTO/user.dto";
+import { NewUser } from "src/shared/DTO/newUser.dto";
+import { UpdateUserMdp } from "src/shared/DTO/updateUserMdp.dto";
 
 @Controller("api/users")
 export class UserController
@@ -29,7 +33,7 @@ export class UserController
 
     //  --> GET --> /api/users
     @Get()
-    getAllUsers() : Promise<any[]>
+    getAllUsers() : Promise<User[]>
     {
         return this.userServe.getAll()
     }
@@ -38,8 +42,8 @@ export class UserController
     // --> GET --> /api/users/:userId
     @Get(":userId")
     getOneUser(
-        @Param("userId") userId : number
-    ) : Promise<any>
+        @Param("userId", ParseIntPipe) userId : UserId
+    ) : Promise<User>
     {
         return this.userServe.getOne(userId)
     }
@@ -48,8 +52,8 @@ export class UserController
     // --> POST --> /api/users
     @Post()
     createUser(
-        @Body() newUser : any
-    ) : Promise<{ userId: number }>
+        @Body(ValidationPipe) newUser : NewUser
+    ) : Promise<UserId>
     {
         return this.userServe.create(newUser)
     }
@@ -58,19 +62,19 @@ export class UserController
     // --> PATCH --> /api/users/:userId
     @Patch(":userId")
     updateUser(
-        @Param("userId") userId : number,
-        @Body() updateUser : any
-    ) : Promise<{ userId: number }>
+        @Param("userId", ParseIntPipe) userId : UserId,
+        @Body() updateUserMdp : UpdateUserMdp
+    ) : Promise<UserId>
     {
-        return this.userServe.updateMdp(userId, updateUser)
+        return this.userServe.updateMdp(userId, updateUserMdp)
     }
 
 
     // --> DELETE --> /api/users/:userId
     @Delete(":userId")
     disableUser(
-        @Param("userId") userId : number
-    ) : Promise<{ userId: number }>
+        @Param("userId", ParseIntPipe) userId : UserId
+    ) : Promise<UserId>
     {
         return this.userServe.disable(userId)
     }

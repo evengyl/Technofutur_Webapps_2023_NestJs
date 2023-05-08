@@ -1,10 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { NewUser } from "src/shared/DTO/newUser.dto";
+import { UpdateUserMdp } from "src/shared/DTO/updateUserMdp.dto";
+import { User } from "src/shared/DTO/user.dto";
+import { UserId } from "src/shared/DTO/userId.dto";
 
 @Injectable()
 export class UserService
 {
 
-    private users : any[] = [
+    private users : User[] = [
         { id : 1, login : "Sébastien", mdp : "Test1234", active : true },
         { id : 2, login : "Aymeric", mdp : "Test1234", active : true },
         { id : 3, login : "Amandine", mdp : "Test1234", active : true },
@@ -18,12 +22,12 @@ export class UserService
     }
 
 
-    async getAll() : Promise<any[]>
+    async getAll() : Promise<User[]>
     {
         return this.users
     }
 
-    async getOne(userId : number) : Promise<any | undefined>
+    async getOne(userId : UserId) : Promise<User | undefined>
     {
         let userFoundShort = this.users.find(user => user.id == userId)
 
@@ -34,45 +38,36 @@ export class UserService
                 return undefined
         })
 
-        //console.log(userFoundLong)
-        //console.log(userFoundShort)
-        return userFoundShort
-    }
-
-    async create(newUser : any) : Promise<{userId : number}>
-    {
-        let totalUser = this.users.length
-        let newId = totalUser + 1
-
-        if(newUser.login != undefined && newUser.mdp != undefined)
-        {
-            this.users.push({id : newId, ...newUser})
-            return { userId : newId }
-        }
+        if(userFoundShort != undefined)
+            return userFoundShort
         else
-        {
-            throw new HttpException("Erreur : Nombre de paramètre body incorrect", HttpStatus.BAD_REQUEST)
-        }
-
+            throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
     }
 
-    async updateMdp(userId : number, newMdp : any) : Promise<{userId : number}>
+    async create(newUser : NewUser) : Promise<UserId>
     {
-        if(newMdp.mdp == undefined) throw new HttpException("Erreur : Nombre de paramètre body incorrect", HttpStatus.BAD_REQUEST)
+        newUser.id = this.users.length + 1
+        newUser.active = true
 
+        this.users.push({...newUser})
 
+        return newUser.id    
+    }
+
+    async updateMdp(userId : UserId, newMdp : UpdateUserMdp) : Promise<UserId>
+    {
         let userIndexFound = this.users.findIndex(user => user.id == userId)
 
         if(userIndexFound != -1)
         {
             this.users[userIndexFound].mdp = newMdp.mdp
-            return { userId : this.users[userIndexFound].id }
+            return this.users[userIndexFound].id
         }
         else
             throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
     }
 
-    async disable(userId : number) : Promise<{userId : number}>
+    async disable(userId : UserId) : Promise<UserId>
     {
         let userIndexFound = this.users.findIndex(user => user.id == userId)
 
@@ -81,7 +76,7 @@ export class UserService
             if(this.users[userIndexFound].active == true)
             {
                 this.users[userIndexFound].active == false
-                return { userId : this.users[userIndexFound].id }
+                return this.users[userIndexFound].id
             }
             else
                 throw new HttpException("Erreur : User already desactivated", HttpStatus.BAD_REQUEST)
