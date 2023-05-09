@@ -6,12 +6,12 @@ export class UsersEntity{
     @PrimaryGeneratedColumn()
     id : number
 
-    @Column({ length : 50, nullable : false})
+    @Column( { length : 50, nullable : false, unique : true } )
     login : string
 
-    @Column({ unique : true, length : 50})
+    @Column( { length : 50} )
     mdp : string
 
-    @Column()
+    @Column( { default : true} )
     active : boolean
 }

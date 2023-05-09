@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { NewUser } from "src/shared/DTO/newUser.dto";
 import { UpdateUserMdp } from "src/shared/DTO/updateUserMdp.dto";
 import { User } from "src/shared/DTO/user.dto";
 import { UserId } from "src/shared/DTO/userId.dto";
 import { UsersEntity } from "src/shared/entities/users.entity";
-import { Repository } from "typeorm";
+import { InsertResult, Repository, UpdateResult } from "typeorm";
 
 @Injectable()
 export class UserService
@@ -88,44 +88,56 @@ export class UserService
         return oneUser
     }
 
-    async create(newUser : NewUser) : Promise<UserId>
+    async create(newUser : NewUser) : Promise<UserId | User>
     {
-        newUser.id = this.users.length + 1
-        newUser.active = true
+        let userEntityCreated = this.usersRepo.create({...newUser})
 
-        this.users.push({...newUser})
+        let resultInsert : InsertResult = await this.usersRepo.insert(userEntityCreated)
+        .catch(_ => { throw new InternalServerErrorException("Error on insert user in sql") })
 
-        return newUser.id    
+        console.log(resultInsert)
+        return resultInsert.identifiers[0].id
+        
+        /*let resultSave = await this.usersRepo.save(userEntityCreated)
+        .catch(_ => {
+            throw new InternalServerErrorException("Error on save user in sql")
+        })
+
+        let userCreated = new User()
+        userCreated.id = resultSave.id
+        userCreated.login = resultSave.login
+
+        return userCreated*/
     }
 
     async updateMdp(userId : UserId, newMdp : UpdateUserMdp) : Promise<UserId>
     {
-        let userIndexFound = this.users.findIndex(user => user.id == userId)
+        let userExist = await this.usersRepo.findOneOrFail({ where : { id : userId }})
+        .catch(_ => { throw new HttpException("User not found", HttpStatus.NOT_FOUND)})
 
-        if(userIndexFound != -1)
-        {
-            this.users[userIndexFound].mdp = newMdp.mdp
-            return this.users[userIndexFound].id
-        }
-        else
-            throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
+        userExist.mdp = newMdp.mdp
+        let userSaved = await this.usersRepo.save(userExist)
+        .catch(_ => { throw new InternalServerErrorException("Error on save user in sql") })
+
+        let id : UserId = userSaved.id
+
+        return id
     }
 
     async disable(userId : UserId) : Promise<UserId>
     {
-        let userIndexFound = this.users.findIndex(user => user.id == userId)
+        let userExist = await this.usersRepo.findOneOrFail({ where : { id : userId }})
+        .catch(_ => { throw new HttpException("User not found", HttpStatus.NOT_FOUND)})
 
-        if(userIndexFound != -1)
-        {
-            if(this.users[userIndexFound].active == true)
-            {
-                this.users[userIndexFound].active == false
-                return this.users[userIndexFound].id
-            }
-            else
-                throw new HttpException("Erreur : User already desactivated", HttpStatus.BAD_REQUEST)
-        }
+        userExist.active = false
+        let userSaved : UpdateResult = await this.usersRepo.update(userId, userExist)
+        .catch(_ => { throw new InternalServerErrorException("Error on save user in sql") })
+
+        console.log(userSaved)
+
+        if(userSaved.affected == 1)
+            return userExist.id
         else
-            throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
+            return -1
     }
 }

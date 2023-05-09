@@ -53,7 +53,7 @@ export class UserController
     @Post()
     createUser(
         @Body(ValidationPipe) newUser : NewUser
-    ) : Promise<UserId>
+    ) : Promise<UserId | User>
     {
         return this.userServe.create(newUser)
     }
