@@ -1,8 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { NewUser } from "src/shared/DTO/newUser.dto";
 import { UpdateUserMdp } from "src/shared/DTO/updateUserMdp.dto";
 import { User } from "src/shared/DTO/user.dto";
 import { UserId } from "src/shared/DTO/userId.dto";
+import { UsersEntity } from "src/shared/entities/users.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class UserService
@@ -18,30 +21,71 @@ export class UserService
         { id : 7, login : "Meroine", mdp : "Test1234", active : true }
     ]
 
-    constructor(){
-    }
+    constructor(
+        @InjectRepository(UsersEntity) private usersRepo : Repository<UsersEntity>
+    ){}
 
 
     async getAll() : Promise<User[]>
     {
-        return this.users
+        
+
+        /*return await this.usersRepo.find({
+            select : { login : true, }, 
+            where : { active : true },
+            order : { id : "DESC"}
+        })*/
+
+        /*return await this.usersRepo.findAndCount({
+            select : { login : true, }, 
+        number]>    where : { active : true },
+            order : { id : "DESC"}
+        })
+        .then((users) => {
+            return users
+        })
+        .then((users2) => {
+            return users2
+        })
+        .catch(() => {
+            throw new HttpException("erreur non connue", HttpStatus.FORBIDDEN)
+        })   attention de remettre : Promise<[User[],  en retour de methode*/
+
+
+        //let data = await this.usersRepo.findAndCountBy({ active : true })
+        //console.log(data)
+
+
+        return await this.usersRepo.find() //select * classique
     }
 
     async getOne(userId : UserId) : Promise<User>
     {
-        let userFoundShort = this.users.find(user => user.id == userId)
-
-        let userFoundLong = this.users.find((user) => {
-            if(user.id == userId)
-                return user
-            else
-                return undefined
+        /*let oneUser = await this.usersRepo.findOne({
+            where : { id : userId}
         })
+        .catch(_ => {
+            throw new HttpException("erreur non connue", HttpStatus.FORBIDDEN)
+        })*/
 
-        if(userFoundShort != undefined)
-            return userFoundShort
-        else
-            throw new HttpException("Erreur : User not found", HttpStatus.NOT_FOUND)
+        //let oneUser = await this.usersRepo.findOneBy({ active : true, id : userId })
+
+
+        /*let oneUser = await this.usersRepo.findOneOrFail({
+            where : { id : userId}
+        })
+        .catch(_ => {
+            throw new HttpException("VIDE", HttpStatus.NOT_FOUND)
+        })*/
+
+        let oneUser = await this.usersRepo.findOneByOrFail(
+            { active : true, id : userId }
+        )
+        .catch(_ => {
+            throw new HttpException("VIDE", HttpStatus.NOT_FOUND)
+        })
+        //pour toute options liée au select classique donc les find, voir la doc https://typeorm.io/find-options
+        return oneUser
     }
 
     async create(newUser : NewUser) : Promise<UserId>

@@ -33,7 +33,7 @@ export class UserController
 
     //  --> GET --> /api/users
     @Get()
-    getAllUsers() : Promise<User[]>
+    getAllUsers(): Promise<User[]>// : Promise<[User[], number]>
     {
         return this.userServe.getAll()
     }
