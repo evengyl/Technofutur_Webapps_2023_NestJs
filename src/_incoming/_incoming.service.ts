@@ -58,7 +58,7 @@ export class IncomingService
 
     async departureAnimal(animalId : number) : Promise<any>
     {
-        this.verifyAnimalId(animalId)
+        await this.verifyAnimalId(animalId)
 
         let indexAnimal = this.animals.findIndex(animal => animal.id == animalId)
         this.animals[indexAnimal].isHere = false
@@ -67,7 +67,7 @@ export class IncomingService
 
     async vaccineAnimal(animalId : number) : Promise<any>
     {
-        this.verifyAnimalId(animalId)
+        await this.verifyAnimalId(animalId)
 
         let indexAnimal = this.animals.findIndex(animal => animal.id == animalId)
         this.animals[indexAnimal].isVaccine = true
@@ -76,7 +76,7 @@ export class IncomingService
 
     async dieAnimal(animalId : number) : Promise<any>
     {
-        this.verifyAnimalId(animalId)
+        await this.verifyAnimalId(animalId)
 
         let indexAnimal = this.animals.findIndex(animal => animal.id == animalId)
         this.animals[indexAnimal].isAlive = false
@@ -85,7 +85,7 @@ export class IncomingService
 
     async reviveAnimal(animalId : number) : Promise<any>
     {
-        this.verifyAnimalId(animalId)
+        await this.verifyAnimalId(animalId)
 
         let indexAnimal = this.animals.findIndex(animal => animal.id == animalId)
         this.animals[indexAnimal].isAlive = true
