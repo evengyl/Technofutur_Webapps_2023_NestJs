@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserDonationEntity } from "./userDonation.entity";
+import { LifetimeEntity } from "./lifetime.entity";
 
 @Entity("users")
-export class UsersEntity{
+export class UsersEntity extends LifetimeEntity{
 
     @PrimaryGeneratedColumn()
     id : number
@@ -12,10 +13,6 @@ export class UsersEntity{
 
     @Column( { length : 50, nullable : false} )
     mdp : string
-
-    @Column( { default : true} )
-    active : boolean
-
 
     
     /////////////////////////////

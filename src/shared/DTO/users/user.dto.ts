@@ -17,9 +17,6 @@ export class User{
     @IsDefined()
     mdp : string
 
-    @IsDefined()
-    active : boolean
-
 
     
     /////////////////////////////

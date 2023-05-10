@@ -62,19 +62,20 @@ export class UserService
         //let oneUser = await this.usersRepo.findOneBy({ active : true, id : userId })
 
 
-        /*let oneUser = await this.usersRepo.findOneOrFail({
-            where : { id : userId}
+        let oneUser = await this.usersRepo.findOneOrFail({
+            where : { id : userId},
+            withDeleted : true
         })
         .catch(_ => {
             throw new HttpException("VIDE", HttpStatus.NOT_FOUND)
-        })*/
+        })
 
-        let oneUser = await this.usersRepo.findOneByOrFail(
-            { active : true, id : userId }
+        /*let oneUser = await this.usersRepo.findOneByOrFail(
+            { id : userId}
         )
         .catch(_ => {
             throw new HttpException("VIDE", HttpStatus.NOT_FOUND)
-        })
+        })*/
         //pour toute options liée au select classique donc les find, voir la doc https://typeorm.io/find-options
         return oneUser
     }
@@ -117,17 +118,20 @@ export class UserService
 
     async disable(userId : UserId) : Promise<UserId>
     {
-        let userExist = await this.usersRepo.findOneOrFail({ where : { id : userId }})
+        let userExist = await this.usersRepo.findOneOrFail({ where : { id : userId }, /*withDeleted : true*/})
         .catch(_ => { throw new HttpException("User not found", HttpStatus.NOT_FOUND)})
 
-        userExist.active = false
-        let userSaved : UpdateResult = await this.usersRepo.update(userId, userExist)
-        .catch(_ => { throw new InternalServerErrorException("Error on save user in sql") })
+        //let res = await this.usersRepo.remove(userExist) -> permet de delete hard... attention au FK
 
-        if(userSaved.affected == 1)
-            return userExist.id
-        else
-            return -1
+        //let res = await this.usersRepo.delete(userId) -> permet de delete hard... attention au FK BY id.....
+
+        //let res = await this.usersRepo.softRemove(userExist) -> fonctionne avec une entity<partial> et renvoi l'entity disabled
+        let res = await this.usersRepo.softDelete(userId) //-> fonctionne avec un id, renvoi un updateResult
+        
+        //console.log(res)
+        
+        return 1
+
     }
 
 
@@ -170,17 +174,20 @@ export class UserService
     async addDonationByUser(userId : UserId, newUserDonation : NewUserDonation) : Promise<User>
     {
         let user : UsersEntity = await this.usersRepo.findOneOrFail({
-            where : { active : true, id : userId},
-            relations : { donation : true }
+            where : { id : userId},
+            relations : { donation : true },
+            withDeleted : true
         })
         .catch(_ => {
             throw new HttpException("User not found", HttpStatus.NOT_FOUND)
         })
 
+        
         let newDonation = this.userDonationRepo.create(newUserDonation)
         newDonation = await this.userDonationRepo.save(newDonation)
 
         user.donation.push(newDonation)
+        user.deletedAt = null
         let returnCreateDonationUser = await this.usersRepo.save(user)
         
         return returnCreateDonationUser
