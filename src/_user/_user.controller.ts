@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, ValidationPipe } from "@nestjs/common";
 import { UserService } from "./_user.service";
-import { UserId } from "src/shared/DTO/userId.dto";
-import { User } from "src/shared/DTO/user.dto";
-import { NewUser } from "src/shared/DTO/newUser.dto";
-import { UpdateUserMdp } from "src/shared/DTO/updateUserMdp.dto";
+import { NewUser } from "src/shared/DTO/users/newUser.dto";
+import { UpdateUserMdp } from "src/shared/DTO/users/updateUserMdp.dto";
+import { User } from "src/shared/DTO/users/user.dto";
+import { UserId } from "src/shared/DTO/users/userId.dto";
 
 @Controller("api/users")
 export class UserController

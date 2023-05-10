@@ -5,6 +5,7 @@ USE tf_webapps_23_spa;
 SET FOREIGN_KEY_CHECKS = 0;
 
 TRUNCATE `tf_webapps_23_spa`.`users`;
+TRUNCATE `tf_webapps_23_spa`.`user_donation`;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -17,5 +18,15 @@ VALUES
 (5, "Ferdinando", "Test12345", true ),
 (6, "Nicolas", "Test12346", true ),
 (7, "Meroine", "Test12347", true);
+
+
+insert into user_donation (id, `type`, qty_in_kg, expiration_date, `userId`)
+VALUES
+(1, "Croquettes pour chien", 25, "10/09/2023 09:28:37", 1),
+(2, "Croquettes pour chien", 25, "10/09/2023 09:28:37", 4),
+(3, "Croquettes pour chat", 25, "10/09/2023 09:28:37", 4),
+(4, "Croquettes pour chat", 25, "10/11/2023 09:28:37", 1),
+(5, "Croquettes pour chat", 25, "10/12/2023 09:28:37", 3),
+(6, "Nourriture pour Bubule", 25, "10/04/2023 09:28:37", 3);
 
 

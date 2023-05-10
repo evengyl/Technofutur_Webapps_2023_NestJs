@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { NewUser } from "src/shared/DTO/newUser.dto";
-import { UpdateUserMdp } from "src/shared/DTO/updateUserMdp.dto";
-import { User } from "src/shared/DTO/user.dto";
-import { UserId } from "src/shared/DTO/userId.dto";
+import { NewUserDonation } from "src/shared/DTO/donations/newUserDonation.dto";
+import { NewUser } from "src/shared/DTO/users/newUser.dto";
+import { UpdateUserMdp } from "src/shared/DTO/users/updateUserMdp.dto";
+import { User } from "src/shared/DTO/users/user.dto";
+import { UserId } from "src/shared/DTO/users/userId.dto";
 import { UsersEntity } from "src/shared/entities/users.entity";
 import { InsertResult, Repository, UpdateResult } from "typeorm";
 
@@ -11,25 +12,12 @@ import { InsertResult, Repository, UpdateResult } from "typeorm";
 export class UserService
 {
 
-    private users : User[] = [
-        { id : 1, login : "Sébastien", mdp : "Test1234", active : true },
-        { id : 2, login : "Aymeric", mdp : "Test1234", active : true },
-        { id : 3, login : "Amandine", mdp : "Test1234", active : true },
-        { id : 4, login : "Rémy", mdp : "Test1234", active : true },
-        { id : 5, login : "Ferdinando", mdp : "Test1234", active : true },
-        { id : 6, login : "Nicolas", mdp : "Test1234", active : true },
-        { id : 7, login : "Meroine", mdp : "Test1234", active : true }
-    ]
-
     constructor(
         @InjectRepository(UsersEntity) private usersRepo : Repository<UsersEntity>
     ){}
 
-
     async getAll() : Promise<User[]>
     {
-        
-
         /*return await this.usersRepo.find({
             select : { login : true, }, 
             where : { active : true },
@@ -97,7 +85,7 @@ export class UserService
 
         console.log(resultInsert)
         return resultInsert.identifiers[0].id
-        
+
         /*let resultSave = await this.usersRepo.save(userEntityCreated)
         .catch(_ => {
             throw new InternalServerErrorException("Error on save user in sql")
@@ -133,11 +121,27 @@ export class UserService
         let userSaved : UpdateResult = await this.usersRepo.update(userId, userExist)
         .catch(_ => { throw new InternalServerErrorException("Error on save user in sql") })
 
-        console.log(userSaved)
-
         if(userSaved.affected == 1)
             return userExist.id
         else
             return -1
+    }
+
+
+    async getAllDonation()
+    {
+
+    }
+
+
+    async getDonationByUserId(userId : UserId)
+    {
+
+    }
+
+
+    async addDonationByUser(userId : UserId, newUserDonation : NewUserDonation)
+    {
+
     }
 }

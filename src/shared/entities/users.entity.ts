@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { UserDonationEntity } from "./userDonation.entity";
 
 @Entity("users")
 export class UsersEntity{
@@ -9,9 +10,13 @@ export class UsersEntity{
     @Column( { length : 50, nullable : false, unique : true } )
     login : string
 
-    @Column( { length : 50} )
+    @Column( { length : 50, nullable : false} )
     mdp : string
 
     @Column( { default : true} )
     active : boolean
+
+    @OneToMany(() => UserDonationEntity, donation => donation.user, { cascade : ["insert", "update"]})
+    @JoinColumn()
+    donation : UserDonationEntity[]
 }
