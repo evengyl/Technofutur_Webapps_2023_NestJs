@@ -5,6 +5,7 @@ import { NewUser } from "src/shared/DTO/users/newUser.dto";
 import { UpdateUserMdp } from "src/shared/DTO/users/updateUserMdp.dto";
 import { User } from "src/shared/DTO/users/user.dto";
 import { UserId } from "src/shared/DTO/users/userId.dto";
+import { UserDonationEntity } from "src/shared/entities/userDonation.entity";
 import { UsersEntity } from "src/shared/entities/users.entity";
 import { InsertResult, Repository, UpdateResult } from "typeorm";
 
@@ -13,7 +14,8 @@ export class UserService
 {
 
     constructor(
-        @InjectRepository(UsersEntity) private usersRepo : Repository<UsersEntity>
+        @InjectRepository(UsersEntity) private usersRepo : Repository<UsersEntity>,
+        @InjectRepository(UserDonationEntity) private userDonationRepo : Repository<UserDonationEntity>
     ){}
 
     async getAll() : Promise<User[]>

@@ -4,6 +4,7 @@ import { UserService } from "./_user.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UsersEntity } from "src/shared/entities/users.entity";
 import { DonationContrller } from "./_donation.controller";
+import { UserDonationEntity } from "src/shared/entities/userDonation.entity";
 
 @Module({
     controllers : [
@@ -13,7 +14,8 @@ import { DonationContrller } from "./_donation.controller";
     providers : [UserService],
     imports : [
         TypeOrmModule.forFeature([
-            UsersEntity
+            UsersEntity,
+            UserDonationEntity
         ])
     ]
 })
