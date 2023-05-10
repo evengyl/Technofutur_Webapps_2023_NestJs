@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { NewUserDonation } from "src/shared/DTO/donations/newUserDonation.dto";
+import { UserDonation } from "src/shared/DTO/donations/userDonation.dto";
 import { NewUser } from "src/shared/DTO/users/newUser.dto";
 import { UpdateUserMdp } from "src/shared/DTO/users/updateUserMdp.dto";
 import { User } from "src/shared/DTO/users/user.dto";
@@ -130,20 +131,58 @@ export class UserService
     }
 
 
-    async getAllDonation()
-    {
 
+    /////////////////////////////
+    //Part Relational Entities //
+    /////////////////////////////
+
+    async getAllDonation() : Promise<UserDonation[]>
+    {
+        //si on part de donation controller -> on aura à faire get all donation join user
+        let datas = await this.userDonationRepo.find({
+            select : { type : true, qty_in_kg : true, user : { login : true } },
+            relations : { user : true },
+            //where : { user : { active : true } }
+        }) 
+        
+        //si on part de user controller -> on aura à faire get all user join donation
+        /*let datas = await this.usersRepo.find({
+            select : { donation : { type : true}, login : true},
+            relations : { donation : true}
+        })
+        console.log(datas)*/
+
+        //pour l'exemple nous verrons les deux facon
+        return datas
     }
 
 
-    async getDonationByUserId(userId : UserId)
+    async getDonationByUserId(userId : UserId) : Promise<UserDonation[]>
     {
+        let datas = await this.userDonationRepo.find({ 
+            where : { user : { id : userId} }
+        })
 
+        return datas
     }
 
 
-    async addDonationByUser(userId : UserId, newUserDonation : NewUserDonation)
+    async addDonationByUser(userId : UserId, newUserDonation : NewUserDonation) : Promise<User>
     {
+        let user : UsersEntity = await this.usersRepo.findOneOrFail({
+            where : { active : true, id : userId},
+            relations : { donation : true }
+        })
+        .catch(_ => {
+            throw new HttpException("User not found", HttpStatus.NOT_FOUND)
+        })
 
+        let newDonation = this.userDonationRepo.create(newUserDonation)
+        newDonation = await this.userDonationRepo.save(newDonation)
+
+        user.donation.push(newDonation)
+        let returnCreateDonationUser = await this.usersRepo.save(user)
+        
+        return returnCreateDonationUser
     }
 }

@@ -16,6 +16,12 @@ export class UserDonationEntity{
     @Column({ default : new Date().toLocaleString('fr-be', { timeZone: 'Europe/Brussels' })})
     expiration_date : string
 
+
+    
+    /////////////////////////////
+    //Part Relational Entities //
+    /////////////////////////////
+    
     @ManyToOne(() => UsersEntity, user => user.donation, { cascade : ["insert", "update"]})
     @JoinColumn()
     user : UsersEntity

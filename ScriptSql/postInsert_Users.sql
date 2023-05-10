@@ -13,8 +13,8 @@ insert into users (id, login, mdp, active)
 VALUES
 (1, "Sébastien", "Test12341", true ),
 (2, "Aymeric", "Test12342", true ),
-(3, "Amandine", "Test12343", true ),
-(4, "Rémy", "Test12344", true ),
+(3, "Amandine", "Test12343", false ),
+(4, "Rémy", "Test12344", false ),
 (5, "Ferdinando", "Test12345", true ),
 (6, "Nicolas", "Test12346", true ),
 (7, "Meroine", "Test12347", true);

@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, ValidationPipe } from "@nestjs/comm
 import { UserService } from "./_user.service";
 import { UserId } from "src/shared/DTO/users/userId.dto";
 import { NewUserDonation } from "src/shared/DTO/donations/newUserDonation.dto";
+import { UserDonation } from "src/shared/DTO/donations/userDonation.dto";
+import { User } from "src/shared/DTO/users/user.dto";
 
 @Controller("api/donations")
 export class DonationContrller{
@@ -11,8 +13,11 @@ export class DonationContrller{
     ){}
 
 
+    /////////////////////////////
+    //Part Relational Entities //
+    /////////////////////////////
     @Get()
-    getAllDonation()
+    getAllDonation() : Promise<UserDonation[]>
     {
         return this.userServe.getAllDonation()
     }
@@ -21,7 +26,7 @@ export class DonationContrller{
     @Get(":userId")
     getDonationByUserId(
         @Param("userId") userId : UserId
-    )
+    ) : Promise<UserDonation[]>
     {
         return this.userServe.getDonationByUserId(userId)
     }
@@ -31,7 +36,7 @@ export class DonationContrller{
     addDonationByUser(
         @Param("userId") userId : UserId,
         @Body(ValidationPipe) newUserDonation : NewUserDonation
-    )
+    ) : Promise<User>
     {
         return this.userServe.addDonationByUser(userId, newUserDonation)
     }

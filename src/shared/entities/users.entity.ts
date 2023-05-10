@@ -16,6 +16,11 @@ export class UsersEntity{
     @Column( { default : true} )
     active : boolean
 
+
+    
+    /////////////////////////////
+    //Part Relational Entities //
+    /////////////////////////////
     @OneToMany(() => UserDonationEntity, donation => donation.user, { cascade : ["insert", "update"]})
     @JoinColumn()
     donation : UserDonationEntity[]

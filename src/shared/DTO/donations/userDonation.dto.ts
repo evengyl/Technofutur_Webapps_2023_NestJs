@@ -10,5 +10,10 @@ export class UserDonation{
 
     expiration_date : string
 
+
+    
+    /////////////////////////////
+    //Part Relational Entities //
+    /////////////////////////////
     user : User
 }
